@@ -1,4 +1,4 @@
-""" import os
+import os
 import glob
 import pickle
 import fitz  # PyMuPDF
@@ -57,30 +57,3 @@ with open(os.path.join(EMBEDDING_DIR, "chunks.pkl"), "wb") as f:
     pickle.dump(chunks, f)
 
 print("✅ Ingestion complete. Knowledgebase saved in /embeddings/")
- """
-
-import os # for file directory shifting
-import sys
-import io # for UTF-8 encoding (check mark emote)
-from utils.file_loader import load_pdfs_from_dir
-from utils.text_splitter import split_texts
-from utils.embedder import create_embeddings
-from utils.vector_store import save_embeddings
-
-# Ensure working directory is always this file's directory
-os.chdir(os.path.dirname(os.path.abspath(__file__)))
-
-# Force stdout to UTF-8 (fix for Windows console encoding)
-sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
-
-DATA_DIR = "data"
-EMBEDDING_DIR = "embeddings"
-os.makedirs(DATA_DIR, exist_ok=True)
-os.makedirs(EMBEDDING_DIR, exist_ok=True)
-
-if __name__ == "__main__":
-    texts = load_pdfs_from_dir(DATA_DIR)
-    chunks = split_texts(texts)
-    embeddings = create_embeddings(chunks)
-    save_embeddings(embeddings, chunks, EMBEDDING_DIR)
-    print("✅ Ingestion complete!")

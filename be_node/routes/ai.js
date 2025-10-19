@@ -1,17 +1,27 @@
 import express from "express";
-import axios from "axios";
-const router = express.Router();
+import { spawn } from "child_process";
+import path from "path";
+import { fileURLToPath } from "url";
 
-// placeholder route
-router.post("/chat", async (req, res) => {
-  try {
-    const { message } = req.body;
-    // later we'll call Python's offline RAG model here
-    return res.json({ reply: `You said: ${message}` });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Internal server error" });
-  }
+const router = express.Router();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+router.get("/ingest", (req, res) => {
+  const pyProcess = spawn("python", ["../ai_py/day2/offline-rag/ingest.py"]);
+
+  pyProcess.stdout.on("data", (data) => {
+    console.log(`stdout: ${data}`);
+  });
+
+  pyProcess.stderr.on("data", (data) => {
+    console.error(`stderr: ${data}`);
+  });
+
+  pyProcess.on("close", (code) => {
+    if (code === 0) res.send("✅ Ingestion pipeline executed successfully!");
+    else res.status(500).send("❌ Error executing ingestion pipeline.");
+  });
 });
 
 export default router;
