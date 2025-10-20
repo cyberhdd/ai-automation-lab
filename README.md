@@ -129,3 +129,10 @@ Independent full-stack and embedded systems developer
 
 This project is for personal and educational use.
 All rights reserved © 2025 Sayyid Muhammad Al Haddad
+
+
+## ✅ Week 1 Progress
+- Created separate environments for Python, Node, and React
+- Built offline RAG ingestion pipeline using LangChain, FAISS, Sentence Transformers
+- Linked Express backend to trigger Python ingestion scripts
+- Built frontend UI trigger for ingestion

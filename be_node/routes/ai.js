@@ -24,4 +24,9 @@ router.get("/ingest", (req, res) => {
   });
 });
 
+router.get("/status", (req, res) => {
+  res.json({ message: "AI backend is live ✅" });
+});
+
+
 export default router;
