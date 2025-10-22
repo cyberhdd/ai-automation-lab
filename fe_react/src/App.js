@@ -1,34 +1,55 @@
-import { useState } from "react";
+import React, { useState } from "react";
 
 function App() {
   const [status, setStatus] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [question, setQuestion] = useState("");
+  const [answer, setAnswer] = useState("");
 
   const handleIngest = async () => {
-    setLoading(true);
     setStatus("Running ingestion...");
-    try {
-      const res = await fetch("http://localhost:5000/api/ai/ingest");
-      const text = await res.text();
-      setStatus(text);
-    } catch (error) {
-      setStatus("❌ Error running ingestion");
-    } finally {
-      setLoading(false);
-    }
+    const res = await fetch("http://localhost:5000/api/ai/ingest");
+    const text = await res.text();
+    setStatus(text);
+  };
+
+  const handleQuery = async () => {
+    setAnswer("Searching...");
+    const res = await fetch(`http://localhost:5000/api/ai/query?q=${question}`);
+    const text = await res.text();
+    setAnswer(text);
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen">
-      <h1 className="text-2xl mb-4 font-bold">Offline RAG Ingestion Trigger</h1>
+    <div className="flex flex-col items-center justify-center min-h-screen space-y-6">
+      <h1 className="text-2xl font-bold">Offline RAG</h1>
+
       <button
-        className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
         onClick={handleIngest}
-        disabled={loading}
+        className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
       >
-        {loading ? "Running..." : "Run Ingestion"}
+        Run Ingestion
       </button>
-      <p className="mt-4">{status}</p>
+      <p>{status}</p>
+
+      <div className="flex flex-col items-center space-y-2 mt-8">
+        <input
+          type="text"
+          placeholder="Ask a question..."
+          value={question}
+          onChange={(e) => setQuestion(e.target.value)}
+          className="border px-3 py-2 rounded-lg w-64"
+        />
+        <button
+          onClick={handleQuery}
+          className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
+        >
+          Ask
+        </button>
+      </div>
+
+      <pre className="bg-gray-100 p-4 rounded-lg w-3/4 whitespace-pre-wrap">
+        {answer}
+      </pre>
     </div>
   );
 }
