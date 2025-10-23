@@ -14,8 +14,13 @@ function App() {
 
   const handleQuery = async () => {
     setAnswer("Searching...");
-    const res = await fetch(`http://localhost:5000/api/ai/query?q=${question}`);
-    const text = await res.text();
+    const res = await fetch("http://localhost:5000/api/ai/query", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ question }),
+  });
+    const data = await res.json();
+    const text = data.output.replace(/\\r\\n/g, "\n"); // Fix line breaks
     setAnswer(text);
   };
 
